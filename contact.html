@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="final.css" />
+    <title>Contact Us - Casaé</title>
+    <style>
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-wrapper.fade-out {
+            opacity: 0;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #72383d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+  </head>
+  <body>
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+    
+    <script>
+        // Check authentication
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('load', function() {
+            const loaderWrapper = document.querySelector('.loader-wrapper');
+            loaderWrapper.classList.add('fade-out');
+            setTimeout(() => {
+                loaderWrapper.style.display = 'none';
+            }, 500);
+        });
+    </script>
+
+    <header>
+      <div><img src="logoo.png" alt="" class="logo"></div>
+
+      <div class="list">
+        <a href="final.html">HOME</a>
+        <a href="about.html">ABOUT US</a>
+        <a href="property.html">PROPERTY</a>
+        <a href="#" onclick="openAccountModal()">ACCOUNTS</a>
+        <a class="active" href="contact.html">CONTACT US</a>
+      </div>
+
+      <div class="user-controls">
+        <span id="userName"></span>
+        <button class="btn" type="button" onclick="handleLogout()">LOGOUT</button>
+      </div>
+    </header>
+
+    <section class="contact-us container1">
+      <div class="contact-header">
+        <h2>GET IN <span>TOUCH</span></h2>
+        <p>Have questions about our properties or services? We're here to help!</p>
+      </div>
+
+      <div class="contact-container">
+        <div class="contact-info">
+          <div class="info-items-wrapper">
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <h3>Our Location</h3>
+              <p>123 Real Estate Ave, City, Country</p>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-phone"></i>
+              <h3>Phone Number</h3>
+              <p>+1 234 567 8900</p>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-envelope"></i>
+              <h3>Email Address</h3>
+              <p>contact@casae.com</p>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <input type="text" id="name" name="name" placeholder="Your Name" required />
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" name="email" placeholder="Your Email" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <select id="subject" name="subject" required>
+              <option value="">Select Subject</option>
+              <option value="general">General Inquiry</option>
+              <option value="feedback">Feedback & Suggestions</option>
+              <option value="property">Property Information</option>
+              <option value="appointment">Schedule Viewing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <textarea id="message" name="message" rows="5" placeholder="Message..." required></textarea>
+          </div>
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Add Account Modal -->
+    <div id="accountModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Account <span>Management</span></h2>
+          <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div id="accountsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Display user name
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser) {
+          document.getElementById('userName').textContent = `Welcome, ${currentUser.name}`;
+      }
+
+      function handleLogout() {
+          localStorage.removeItem('currentUser');
+          window.location.href = 'login.html';
+      }
+
+      // Account Modal Functionality
+      const accountModal = document.getElementById('accountModal');
+      const span = document.getElementsByClassName('close')[0];
+
+      // Close modal when clicking the X
+      span.onclick = function() {
+        accountModal.style.display = "none";
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        if (event.target == accountModal) {
+          accountModal.style.display = "none";
+        }
+      }
+
+      // Function to load and display accounts
+      function loadAccounts() {
+        const accountsList = document.getElementById('accountsList');
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (users.length === 0) {
+            accountsList.innerHTML = '<div class="no-accounts">No registered accounts found</div>';
+            return;
+        }
+        
+        accountsList.innerHTML = users.map(user => `
+            <div class="account-card">
+                <div class="account-info">
+                    <div class="account-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="account-details">
+                        <h3>${user.name}</h3>
+                        <p><i class="fas fa-envelope"></i> ${user.email}</p>
+                    </div>
+                </div>
+                <div class="account-actions">
+                    ${user.email === currentUser.email 
+                        ? '<div class="current-user-badge"><i class="fas fa-check-circle"></i> Current User</div>'
+                        : '<button class="delete-btn" onclick="deleteAccount(\'${user.email}\')"><i class="fas fa-trash"></i> Delete</button>'
+                    }
+                </div>
+            </div>
+        `).join('');
+      }
+
+      // Function to delete account
+      function deleteAccount(email) {
+          if (confirm('Are you sure you want to delete this account?')) {
+              let users = JSON.parse(localStorage.getItem('users')) || [];
+              users = users.filter(user => user.email !== email);
+              localStorage.setItem('users', JSON.stringify(users));
+              loadAccounts();
+          }
+      }
+
+      // Function to open account modal
+      function openAccountModal() {
+          accountModal.style.display = 'block';
+          loadAccounts();
+      }
+    </script>
+  </body>
+</html>

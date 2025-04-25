@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="final.css" />
+    <title>Residential Properties - Casaé</title>
+    <style>
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-wrapper.fade-out {
+            opacity: 0;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #72383d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+  </head>
+  <body>
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+    
+    <script>
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('load', function() {
+            const loaderWrapper = document.querySelector('.loader-wrapper');
+            loaderWrapper.classList.add('fade-out');
+            setTimeout(() => {
+                loaderWrapper.style.display = 'none';
+            }, 500);
+        });
+    </script>
+
+    <header>
+      <div><img src="logoo.png" alt="" class="logo"></div>
+
+      <div class="list">
+        <a href="final.html">HOME</a>
+        <a href="about.html">ABOUT US</a>
+        <a class="active" href="property.html">PROPERTY</a>
+        <a href="manage-accounts.html">ACCOUNTS</a>
+        <a href="contact.html">CONTACT US</a>
+      </div>
+
+      <div class="user-controls">
+        <span id="userName"></span>
+        <button class="btn" type="button" onclick="handleLogout()">LOGOUT</button>
+      </div>
+    </header>
+
+    <section class="property-section">
+      <div class="container1">
+        <h2>RESIDENTIAL <span>PROPERTIES</span></h2>
+        <div class="property-grid">
+          <!-- Property cards will be added here -->
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Casaé</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "DM Sans", sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url(bgg.jpg);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-box {
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .form-box h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #72383d;
+        }
+
+        .form-box .input-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-box input:focus {
+            border-color: #cd8417;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #72383d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #cd8417;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .register-link a {
+            color: #cd8417;
+            text-decoration: none;
+        }
+
+        .error-message {
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box" id="loginForm">
+            <h2>Login</h2>
+            <div class="error-message" id="loginError"></div>
+            <form onsubmit="return handleLogin(event)">
+                <div class="input-box">
+                    <input type="email" placeholder="Email" id="loginEmail" required>
+                </div>
+                <div class="input-box">
+                    <input type="password" placeholder="Password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="register-link">
+                <p>Don't have an account? <a href="#" onclick="toggleForms()">Register</a></p>
+            </div>
+        </div>
+
+        <div class="form-box" id="registerForm" style="display: none;">
+            <h2>Register</h2>
+            <div class="error-message" id="registerError"></div>
+            <form onsubmit="return handleRegister(event)">
+                <div class="input-box">
+                    <input type="text" placeholder="Full Name" id="registerName" required>
+                </div>
+                <div class="input-box">
+                    <input type="email" placeholder="Email" id="registerEmail" required>
+                </div>
+                <div class="input-box">
+                    <input type="password" placeholder="Password" id="registerPassword" required>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <div class="register-link">
+                <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is already logged in
+        if (localStorage.getItem('currentUser')) {
+            window.location.href = 'final.html';
+        }
+
+        function toggleForms() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check if user already exists
+            if (users.find(user => user.email === email)) {
+                const errorElement = document.getElementById('registerError');
+                errorElement.textContent = 'Email already registered';
+                errorElement.style.display = 'block';
+                return false;
+            }
+            
+            // Add new user
+            users.push({ name, email, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Auto login after registration
+            localStorage.setItem('currentUser', JSON.stringify({ name, email }));
+            window.location.href = 'final.html';
+            
+            return false;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify({ name: user.name, email: user.email }));
+                window.location.href = 'final.html';
+            } else {
+                const errorElement = document.getElementById('loginError');
+                errorElement.textContent = 'Invalid email or password';
+                errorElement.style.display = 'block';
+            }
+            
+            return false;
+        }
+    </script>
+    
+</body>
+</html>

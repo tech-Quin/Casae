@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="final.css" />
+    <title>Account Management - Casaé</title>
+    <style>
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-wrapper.fade-out {
+            opacity: 0;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #72383d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+  </head>
+  <body>
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+    
+    <script>
+        // Check authentication
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'login.html';
+        }
+
+        // Handle loader
+        window.addEventListener('load', function() {
+            const loaderWrapper = document.querySelector('.loader-wrapper');
+            loaderWrapper.classList.add('fade-out');
+            setTimeout(() => {
+                loaderWrapper.style.display = 'none';
+            }, 500);
+        });
+    </script>
+
+    <header>
+      <div><img src="logoo.png" alt="" class="logo"></div>
+
+      <div class="list">
+        <a href="final.html">HOME</a>
+        <a href="about.html">ABOUT US</a>
+        <a href="property.html">PROPERTY</a>
+        <a class="active" href="manage-accounts.html">ACCOUNTS</a>
+        <a href="contact.html">CONTACT US</a>
+      </div>
+
+      <div class="user-controls">
+        <span id="userName"></span>
+        <button class="btn" type="button" onclick="handleLogout()">LOGOUT</button>
+      </div>
+    </header>
+
+    <section class="accounts container1">
+      <div class="accounts-header">
+        <h2>MANAGE <span>ACCOUNTS</span></h2>
+        <p>View and manage user accounts</p>
+      </div>
+
+      <div class="accounts-filters">
+        <input type="text" placeholder="Search accounts..." class="search-input">
+        <select class="sort-select">
+          <option value="name">Sort by Name</option>
+          <option value="date">Sort by Date</option>
+          <option value="role">Sort by Role</option>
+        </select>
+      </div>
+
+      <div class="accounts-grid">
+        <!-- Account cards will be dynamically added here -->
+      </div>
+    </section>
+  </body>
+</html>
+
+    <script>
+      // Display user name
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser) {
+          document.getElementById('userName').textContent = `Welcome, ${currentUser.name}`;
+      }
+
+      function handleLogout() {
+          localStorage.removeItem('currentUser');
+          window.location.href = 'login.html';
+      }
+
+      // Function to load and display accounts
+      function loadAccounts() {
+        const accountsList = document.getElementById('accountsList');
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        if (users.length === 0) {
+          accountsList.innerHTML = '<div class="no-accounts">No registered accounts found</div>';
+          return;
+        }
+        
+        accountsList.innerHTML = users.map(user => `
+          <div class="account-card">
+            <div class="account-info">
+              <div class="account-avatar">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <div class="account-details">
+                <h3>${user.name}</h3>
+                <p><i class="fas fa-envelope"></i> ${user.email}</p>
+                <p><i class="fas fa-clock"></i> Account created: ${user.createdAt || 'N/A'}</p>
+              </div>
+            </div>
+            <div class="account-actions">
+              ${currentUser.email !== user.email ? 
+                `<button class="delete-btn" onclick="deleteAccount('${user.email}')">
+                  <i class="fas fa-trash"></i> Delete Account
+                </button>` : 
+                '<span class="current-user-badge"><i class="fas fa-user-check"></i> Current User</span>'
+              }
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Function to delete an account
+      function deleteAccount(email) {
+        if (confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
+          let users = JSON.parse(localStorage.getItem('users')) || [];
+          users = users.filter(user => user.email !== email);
+          localStorage.setItem('users', JSON.stringify(users));
+          loadAccounts(); // Refresh the accounts list
+        }
+      }
+
+      // Load accounts when the page loads
+      window.addEventListener('load', loadAccounts);
+    </script>

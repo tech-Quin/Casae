@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="final.css" />
+    <title>Properties - Casaé</title>
+    <style>
+      .loader-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .loader-wrapper.fade-out {
+        opacity: 0;
+      }
+
+      .loader {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #72383d;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Tab Styles */
+      .property-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem 0;
+        padding: 0 1rem;
+      }
+
+      .property-header{
+        text-align: center;
+        margin-top: 2rem;
+        color: #72383d;
+      }
+
+      .tab-button {
+        padding: 10px 20px;
+        border: none;
+        background: none;
+        color: #666;
+        font-size: 1.1rem;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .tab-button.active {
+        color: #72383d;
+        font-weight: bold;
+      }
+
+      .tab-button.active::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: #72383d;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 2rem;
+      }
+
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader-wrapper">
+      <div class="loader"></div>
+    </div>
+
+    <script>
+      // Check authentication
+      if (!localStorage.getItem("currentUser")) {
+        window.location.href = "login.html";
+      }
+
+      window.addEventListener("load", function () {
+        const loaderWrapper = document.querySelector(".loader-wrapper");
+        loaderWrapper.classList.add("fade-out");
+        setTimeout(() => {
+          loaderWrapper.style.display = "none";
+        }, 500);
+      });
+    </script>
+
+    <header>
+      <div><img src="logoo.png" alt="" class="logo" /></div>
+
+      <div class="list">
+        <a href="final.html">HOME</a>
+        <a href="about.html">ABOUT US</a>
+        <a class="active" href="property.html" target="_blank">PROPERTY</a>
+        <a href="#" onclick="openAccountModal()">ACCOUNTS</a>
+        <a href="contact.html">CONTACT US</a>
+      </div>
+
+      <div class="user-controls">
+        <span id="userName"></span>
+        <button class="btn" type="button" onclick="handleLogout()">
+          LOGOUT
+        </button>
+      </div>
+    </header>
+
+    <section class="property container1">
+      <div class="property-header">
+        <h2>FEATURED <span>PROPERTIES</span></h2>
+        <p>Discover our handpicked selection of premium properties</p>
+      </div>
+
+      <div class="property-tabs">
+        <button class="tab-button active" onclick="openTab('all')">
+          All Properties
+        </button>
+        <button class="tab-button" onclick="openTab('residential')">
+          Residential
+        </button>
+        <button class="tab-button" onclick="openTab('commercial')">
+          Commercial
+        </button>
+        <button class="tab-button" onclick="openTab('luxury')">Luxury</button>
+      </div>
+
+      <div id="all" class="tab-content active">
+        <div class="property-grid">
+          <!-- Property 1 -->
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property1/1.jpg" alt="Luxury Villa" />
+              <div class="property-tag">For Sale</div>
+            </div>
+            <div class="property-details">
+              <h3>Modern Luxury Villa</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 123 Luxury Lane, Beverly
+                Hills
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 5 Beds</span>
+                <span><i class="fas fa-bath"></i> 4 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 4,500 sqft</span>
+              </div>
+              <div class="property-price">$2,850,000</div>
+              <button class="view-details-btn" onclick="viewProperty(1)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <!-- Property 2 -->
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property2/2.jpg" alt="Modern Apartment" />
+              <div class="property-tag">For Rent</div>
+            </div>
+            <div class="property-details">
+              <h3>Luxury Downtown Apartment</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 456 City Center Ave
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 2 Beds</span>
+                <span><i class="fas fa-bath"></i> 2 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 1,200 sqft</span>
+              </div>
+              <div class="property-price">$3,500/month</div>
+              <button class="view-details-btn" onclick="viewProperty(2)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property3/3.jpg" alt="Penthouse Apartment" />
+              <div class="property-tag">For Rent</div>
+            </div>
+            <div class="property-details">
+              <h3>Skyline Penthouse</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 456 Sky Tower, New York
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 3 Beds</span>
+                <span><i class="fas fa-bath"></i> 3 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 2,800 sqft</span>
+              </div>
+              <div class="property-price">$15,000/month</div>
+              <button class="view-details-btn" onclick="viewProperty(3)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property4/4.jpg" alt="Modern Loft" />
+              <div class="property-tag">For Rent</div>
+            </div>
+            <div class="property-details">
+              <h3>Urban Loft</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 123 Downtown St, Chicago
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 2 Beds</span>
+                <span><i class="fas fa-bath"></i> 2 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 1,500 sqft</span>
+              </div>
+              <div class="property-price">$3,500/month</div>
+              <button class="view-details-btn" onclick="viewProperty(4)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property5/5.jpg" alt="Suburban House" />
+              <div class="property-tag">For Sale</div>
+            </div>
+            <div class="property-details">
+              <h3>Charming Suburban House</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 321 Maple Ave, Austin
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 4 Beds</span>
+                <span><i class="fas fa-bath"></i> 3 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 2,700 sqft</span>
+              </div>
+              <div class="property-price">$850,000</div>
+              <button class="view-details-btn" onclick="viewProperty(5)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property6/6.jpg" alt="Luxury Mansion" />
+              <div class="property-tag">For Sale</div>
+            </div>
+            <div class="property-details">
+              <h3>Grand Luxury Mansion</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 999 Royal St, Beverly
+                Hills
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 7 Beds</span>
+                <span><i class="fas fa-bath"></i> 8 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 10,000 sqft</span>
+              </div>
+              <div class="property-price">$15,500,000</div>
+              <button class="view-details-btn" onclick="viewProperty(6)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property7/7.jpg" alt="Cozy Cottage" />
+              <div class="property-tag">For Sale</div>
+            </div>
+            <div class="property-details">
+              <h3>Cozy Mountain Cottage</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 765 Mountain Rd, Aspen
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 3 Beds</span>
+                <span><i class="fas fa-bath"></i> 2 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 1,800 sqft</span>
+              </div>
+              <div class="property-price">$1,200,000</div>
+              <button class="view-details-btn" onclick="viewProperty(7)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property8/8.jpg" alt="Lakefront Villa" />
+              <div class="property-tag">For Sale</div>
+            </div>
+            <div class="property-details">
+              <h3>Lakefront Luxury Villa</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 234 Lakeview Blvd, Tahoe
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 6 Beds</span>
+                <span><i class="fas fa-bath"></i> 5 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 6,200 sqft</span>
+              </div>
+              <div class="property-price">$6,500,000</div>
+              <button class="view-details-btn" onclick="viewProperty(8)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="property-card">
+            <div class="property-image">
+              <img src="properties/property9/9.jpg" alt="Urban Condo" />
+              <div class="property-tag">For Rent</div>
+            </div>
+            <div class="property-details">
+              <h3>Modern Urban Condo</h3>
+              <p class="property-location">
+                <i class="fas fa-map-marker-alt"></i> 123 City Ave, San
+                Francisco
+              </p>
+              <div class="property-features">
+                <span><i class="fas fa-bed"></i> 2 Beds</span>
+                <span><i class="fas fa-bath"></i> 2 Baths</span>
+                <span><i class="fas fa-ruler-combined"></i> 1,250 sqft</span>
+              </div>
+              <div class="property-price">$4,000/month</div>
+              <button class="view-details-btn" onclick="viewProperty(9)">
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <!-- Add similar cards for properties 3-11 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Property Modal -->
+    <div id="propertyModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Property <span>Details</span></h2>
+          <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div class="property-gallery">
+            <!-- Main image and thumbnails will be dynamically inserted here -->
+          </div>
+          <div class="property-info">
+            <h3 id="propertyTitle"></h3>
+            <p id="propertyLocation"></p>
+            <div id="propertyFeatures"></div>
+            <div id="propertyDescription"></div>
+            <div id="propertyPrice"></div>
+            <button class="contact-agent-btn">Contact Agent</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Display user name
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser) {
+        document.getElementById(
+          "userName"
+        ).textContent = `Welcome, ${currentUser.name}`;
+      }
+
+      function handleLogout() {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      // Tab functionality
+      function openTab(tabName) {
+        // Hide all tab content
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let content of tabContents) {
+          content.classList.remove("active");
+        }
+
+        // Remove active class from all buttons
+        const tabButtons = document.getElementsByClassName("tab-button");
+        for (let button of tabButtons) {
+          button.classList.remove("active");
+        }
+
+        // Show the selected tab content
+        document.getElementById(tabName).classList.add("active");
+
+        // Add active class to clicked button
+        event.currentTarget.classList.add("active");
+      }
+    </script>
+
+    <div id="commercial" class="tab-content">
+      <div class="property-grid">
+        <!-- Commercial Property 1 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property3/3.jpg" alt="Commercial Space" />
+            <div class="property-tag">Commercial</div>
+          </div>
+          <div class="property-details">
+            <h3>Modern Office Complex</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Downtown Business District
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-truck"></i> Loading Dock</span>
+              <span><i class="fas fa-warehouse"></i> High Ceiling</span>
+            </div>
+            <div class="property-price">$2,800,000</div>
+            <button class="view-details-btn" onclick="viewProperty(3)">
+              View Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Commercial Property 2 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property4/4.jpg" alt="Commercial Space" />
+            <div class="property-tag">Commercial</div>
+          </div>
+          <div class="property-details">
+            <h3>Retail Plaza</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Shopping District
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-parking"></i> Parking</span>
+              <span><i class="fas fa-store"></i> Storefront</span>
+            </div>
+            <div class="property-price">$1,950,000</div>
+            <button class="view-details-btn" onclick="viewProperty(4)">
+              View Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Commercial Property 3 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property5/5.jpg" alt="Commercial Space" />
+            <div class="property-tag">Commercial</div>
+          </div>
+          <div class="property-details">
+            <h3>Industrial Warehouse</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Industrial Zone
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-warehouse"></i> Large Space</span>
+              <span><i class="fas fa-truck"></i> Loading Bay</span>
+            </div>
+            <div class="property-price">$3,200,000</div>
+            <button class="view-details-btn" onclick="viewProperty(5)">
+              View Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Commercial Property 4 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property6/6.jpg" alt="Commercial Space" />
+            <div class="property-tag">Commercial</div>
+          </div>
+          <div class="property-details">
+            <h3>Business Center</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Financial District
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-building"></i> Office Space</span>
+              <span><i class="fas fa-car"></i> Parking</span>
+            </div>
+            <div class="property-price">$4,500,000</div>
+            <button class="view-details-btn" onclick="viewProperty(6)">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="residential" class="tab-content">
+      <div class="property-grid">
+        <!-- Residential Property 1 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property1/1.jpg" alt="Residential Home" />
+            <div class="property-tag">Residential</div>
+          </div>
+          <div class="property-details">
+            <h3>Modern Family Home</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Suburban Area
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-bed"></i> 4 Beds</span>
+              <span><i class="fas fa-bath"></i> 3 Baths</span>
+            </div>
+            <div class="property-price">$750,000</div>
+            <button class="view-details-btn" onclick="viewProperty(1)">
+              View Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Residential Property 2 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property2/2.jpg" alt="Residential Home" />
+            <div class="property-tag">Residential</div>
+          </div>
+          <div class="property-details">
+            <h3>Cozy Townhouse</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> City Center
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-bed"></i> 3 Beds</span>
+              <span><i class="fas fa-bath"></i> 2 Baths</span>
+            </div>
+            <div class="property-price">$520,000</div>
+            <button class="view-details-btn" onclick="viewProperty(2)">
+              View Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Residential Property 3 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property8/8.jpg" alt="Residential Home" />
+            <div class="property-tag">Residential</div>
+          </div>
+          <div class="property-details">
+            <h3>Garden Villa</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Green Valley
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-bed"></i> 5 Beds</span>
+              <span><i class="fas fa-bath"></i> 4 Baths</span>
+            </div>
+            <div class="property-price">$980,000</div>
+            <button class="view-details-btn" onclick="viewProperty(8)">
+              View Details
+            </button>
+          </div>
+        </div>
+
+        <!-- Residential Property 4 -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="properties/property9/9.jpg" alt="Residential Home" />
+            <div class="property-tag">Residential</div>
+          </div>
+          <div class="property-details">
+            <h3>Urban Apartment</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Downtown
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-bed"></i> 2 Beds</span>
+              <span><i class="fas fa-bath"></i> 2 Baths</span>
+            </div>
+            <div class="property-price">$450,000</div>
+            <button class="view-details-btn" onclick="viewProperty(9)">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="luxury" class="tab-content">
+      <div class="property-grid">
+        <!-- Luxury Property -->
+        <div class="property-card">
+          <div class="property-image">
+            <img src="bg.jpg" alt="Luxury Estate" />
+            <div class="property-tag">Luxury</div>
+          </div>
+          <div class="property-details">
+            <h3>Exclusive Mansion</h3>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i> Private Estate Area
+            </div>
+            <div class="property-features">
+              <span><i class="fas fa-bed"></i> 6 Beds</span>
+              <span><i class="fas fa-bath"></i> 7 Baths</span>
+              <span><i class="fas fa-swimming-pool"></i> Pool</span>
+            </div>
+            <div class="property-price">$8,500,000</div>
+            <button class="view-details-btn" onclick="viewProperty(7)">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openTab(tabName) {
+        // Hide all tab content
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let content of tabContents) {
+          content.classList.remove("active");
+        }
+
+        // Remove active class from all buttons
+        const tabButtons = document.getElementsByClassName("tab-button");
+        for (let button of tabButtons) {
+          button.classList.remove("active");
+        }
+
+        // Show the selected tab content
+        document.getElementById(tabName).classList.add("active");
+
+        // Add active class to the clicked button
+        event.currentTarget.classList.add("active");
+      }
+
+      function viewProperty(propertyId) {
+        const modal = document.getElementById("propertyModal");
+        const gallery = document.querySelector(".property-gallery");
+
+        // Define an array of image filenames for each property
+        const images = [
+          `properties/property${propertyId}/${propertyId}.1.jpg`,
+          `properties/property${propertyId}/${propertyId}.2.jpg`,
+          `properties/property${propertyId}/${propertyId}.3.jpg`,
+          `properties/property${propertyId}/${propertyId}.4.jpg`,
+          `properties/property${propertyId}/${propertyId}.5.jpg`,
+        ];
+
+        // Create the gallery with a main image and thumbnails
+        let galleryContent = `
+      <div class="main-image">
+        <img id="mainImage" src="${images[0]}" alt="Property ${propertyId}">
+      </div>
+      <div class="thumbnail-grid">
+        ${images
+          .map(
+            (image, index) => `
+          <img src="${image}" alt="Thumbnail ${
+              index + 1
+            }" onclick="changeMainImage('${image}')">
+        `
+          )
+          .join("")}
+      </div>`;
+
+        gallery.innerHTML = galleryContent;
+
+        // Update property information dynamically (you can extend this with more data if necessary)
+        document.getElementById(
+          "propertyTitle"
+        ).textContent = `Property ${propertyId} Title`;
+        document.getElementById(
+          "propertyLocation"
+        ).textContent = `Location for Property ${propertyId}`;
+        document.getElementById(
+          "propertyPrice"
+        ).textContent = `$Price for Property ${propertyId}`;
+
+        modal.style.display = "block";
+      }
+
+      // Function to change the main image when clicking a thumbnail
+      function changeMainImage(imageSrc) {
+        document.getElementById("mainImage").src = imageSrc;
+      }
+
+      // Close modal when clicking the X
+      document.querySelector(".close").onclick = function () {
+        document.getElementById("propertyModal").style.display = "none";
+      };
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        const modal = document.getElementById("propertyModal");
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      // Close modal when clicking the X
+      document.querySelector(".close").onclick = function () {
+        document.getElementById("propertyModal").style.display = "none";
+      };
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        const modal = document.getElementById("propertyModal");
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+    
+  </body>
+</html>
